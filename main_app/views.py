@@ -6,6 +6,10 @@ from main_app.models import Disease
 
 def get_list_of_symptoms():
     symptoms = list(Tag.objects.all())
+    q = []
+    for i in symptoms:
+        q.append(i.slug)
+    print(', '.join(q))
     s = []
     for i in range(1, len(symptoms), 2):
         s.append([symptoms[i - 1], symptoms[i]])
