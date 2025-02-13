@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Skin Checker {% endblock %}
+
+{% block body %}
+  <!-- Portfolio Section-->
+        <section class="page-section portfolio" id="portfolio">
+
+            <div class="container">
+                <nav aria-label="breadcrumb" class="my-4 p-2 rounded" style="background-color: #f1f1f1">
+                    <ol class="breadcrumb mb-0 ps-2">
+                      <li class="breadcrumb-item"><a href="{% url 'main_app:index' %}">Главная</a></li>
+                      <li class="breadcrumb-item active" aria-current="page">{{ symptoms_str }}</li>
+                    </ol>
+                </nav>
+                <!-- Portfolio Section Heading-->
+                <h2 class="page-section-heading text-center text-uppercase text-secondary mb-1 mt-5">{{ symptoms_str }}</h2>
+                <!-- Icon Divider-->
+
+                {% if result %}
+                    <p class="lead text-center font-weight-light mb-0 mt-3">Найдено заболеваний: {{ result|length }}</p>
+                    <div class="divider-custom">
+                        <div class="divider-custom-line"></div>
+                        <div class="divider-custom-icon"><i class="fas fa-plus"></i></div>
+                        <div class="divider-custom-line"></div>
+                    </div>
+                    <section class="all-posts">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                {% for disease in result %}
+                                    <div class="col-md-6 col-lg-4 mb-5 col-sm-6">
+                                        <div class="card mb-4 shadow-sm">
+                                            <img src="../media/{{disease.image}}" alt="" class="card-img-top">
+                                            <div class="card-body">
+                                                <h4 class="card-title">{{ disease.title|truncatechars:20 }}</h4>
+                                                <p class="card-text" style="font-size: 17px">{{disease.description|safe|truncatechars:80 }}</p>
+                                                <div class="mb-3">
+                                                    {% for tag in disease.symptoms.all %}
+                                                        <span class="badge text-bg-primary " style="font-size: 14px">{{tag}}</span>
+                                                    {% endfor %}
+                                                </div>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="btn-group">
+                                                        <a data-bs-toggle="modal" data-bs-target="#portfolioModal_{{disease.slug}}" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                {% else %}
+                    <div class="divider-custom">
+                        <div class="divider-custom-line"></div>
+                        <div class="divider-custom-icon"><i class="fas fa-plus"></i></div>
+                        <div class="divider-custom-line"></div>
+                    </div>
+                  <h5 class="text-center">Заболеваний с такими симптомами не найдено. Пожалуйста, попробуйте выбрать другие симптомы.</h5>
+                {% endif %}
+
+                <div class="divider-custom">
+                    <div class="divider-custom-line"></div>
+                    <div class="divider-custom-icon"><i class="fas fa-plus"></i></div>
+                    <div class="divider-custom-line"></div>
+                </div>
+
+                <h2 class="text-center mt-5">Не нашли то, что искали? Попробуйте выбрать другие симптомы.</h2>
+
+                <div class="row mt-5">
+                    <div class="container align-items-center justify-content-center">
+                        <form name="symptoms-form" method="get" action="{% url 'main_app:search' %}">
+                        {% for s in symptoms %}
+                            <div class="row mx-auto" style="width: 70%">
+                                {% for symptom in s %}
+                                  <div class="col-md">
+                                      <input name="{{ symptom.slug }}" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                      <label class="form-check-label" for="flexCheckDefault">
+                                          <h5 class="font-weight-light">
+                                              {{ symptom }}
+                                          </h5>
+                                      </label>
+                                  </div>
+                                {% endfor %}
+                            </div>
+
+                        {% endfor %}
+                        <div class="text-center">
+                            <button class="btn btn-primary btn-xl mt-5" id="submitSymptomButton" type="submit">Найти!</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% for disease in result %}
+        <div class="portfolio-modal modal fade" id="portfolioModal_{{disease.slug}}" tabindex="-1" aria-labelledby="portfolioModal_{{disease.slug}}" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0"><button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button></div>
+                    <div class="modal-body text-center pb-5">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <!-- Portfolio Modal - Title-->
+                                    <h2 class="portfolio-modal-title text-secondary text-uppercase mb-0">{{disease.title}}</h2>
+                                    <!-- Icon Divider-->
+                                    <div class="divider-custom">
+                                        <div class="divider-custom-line"></div>
+                                        <div class="divider-custom-icon"><i class="fas fa-plus"></i></div>
+                                        <div class="divider-custom-line"></div>
+                                    </div>
+                                    <!-- Portfolio Modal - Image-->
+                                    <img class="img-fluid rounded mb-5" src="../media/{{disease.image}}" alt="..." />
+                                    <!-- Portfolio Modal - Text-->
+                                    <p class="mb-4" style="font-size: 20px">{{disease.description}}</p>
+                                    <div class="mb-5">
+                                        <strong style="font-size: 18px">Симптомы:</strong>
+                                        {% for tag in disease.symptoms.all %}
+                                            <span class="badge text-bg-primary mb-1" style="font-size: 17px">{{tag}}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <button class="btn btn-primary" data-bs-dismiss="modal">
+                                        <i class="fas fa-xmark fa-fw"></i>
+                                        Close Window
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+{% endblock %}
