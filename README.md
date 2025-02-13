@@ -1,6 +1,8 @@
 ***Skin Health Checker***
 
 Веб-приложение на Django для определения заболеваний кожи по симптомам.
+
+
 ![alt text](https://github.com/user-attachments/assets/ca92a479-d24c-4bf7-8010-4e8acfeefd38)
 
 Для запуска:
