@@ -1,4 +1,4 @@
-***Skin Health Checker***
+***Skin Health Checker*** (https://skin-health-checker.ru/)
 
 Веб-приложение на Django для определения заболеваний кожи по симптомам.
 
